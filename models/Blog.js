@@ -10,4 +10,4 @@ const BlogSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.export = mongoose.model("User", BlogSchema);
+module.exports = mongoose.model("Blog", BlogSchema);

@@ -30,16 +30,18 @@ router.post("/register", async (req, res) => {
 // LOGIN
 router.post("/login", async (req, res) => {
   try {
-    const email = req.body?.email;
-    const password = req.body?.password;
+    const getEmail = req.body?.email;
+    const getPassword = req.body?.password;
 
-    const getUser = await User.findOne({ email: email });
+    const getUser = await User.findOne({ email: getEmail });
     !getUser && res.status(400).json("Email  address doesn't match!");
 
-    const validate = await bcrypt.compare(password, getUser.password);
+    const validate = await bcrypt.compare(getPassword, getUser.password);
     !validate && res.status(400).json("Password doesn't matched!");
 
-    res.status(200).json(getUser);
+    const { password, ...others } = getUser._doc;
+
+    res.status(200).json(others);
   } catch (err) {
     res.status(500).json(err);
     console.log(err);
