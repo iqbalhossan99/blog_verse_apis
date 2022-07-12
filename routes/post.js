@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const Post = require("../models/Post");
-const verifyToken = require("../middleWare/requireAuth");
 
 // CREATE POST
 router.post("", async (req, res) => {
@@ -25,7 +24,7 @@ router.post("", async (req, res) => {
 });
 
 // GET ALL POST
-router.get("/", verifyToken, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const query = {};
     const posts = await Post.find(query);
@@ -73,6 +72,37 @@ router.put("/:id", async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
     console.log(err);
+  }
+});
+
+// UPDATE COMMENT
+router.put("/:id/comment", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const comment = req.body.comments;
+    console.log(comment);
+    const postComment = await Post.findByIdAndUpdate(
+      id,
+      {
+        $push: { comments: req.body },
+      },
+      { new: true }
+    );
+    res.status(200).json(postComment);
+  } catch (err) {
+    res.status(500).json(err);
+    console.log(err);
+  }
+});
+
+// get one by post id
+router.get("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const comments = await Post.findById(id);
+    res.status(200).json(comments);
+  } catch (err) {
+    res.status(500).json(err);
   }
 });
 
