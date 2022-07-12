@@ -1,20 +1,23 @@
 const router = require("express").Router();
-const Blog = require("../models/Blog");
+const Post = require("../models/Post");
+const verifyToken = require("../middleWare/requireAuth");
 
 // CREATE POST
 router.post("", async (req, res) => {
   try {
-    const title = req.body?.title;
-    const desc = req.body?.desc;
-    const img = req.body?.img;
-    const username = req.body?.username;
-    const query = { title: title, desc: desc, img: img, username: username };
+    // const title = req.body?.title;
+    // const desc = req.body?.desc;
+    // const img = req.body?.img;
+    // const category = req.body?.category;
+    // const username = req.body?.username;
+    // const query = { title: title, desc: desc, img: img, username: username };
 
-    const newBlog = new Blog(query);
+    const query = req?.body;
+    const newPost = new Post(query);
 
-    const blog = await newBlog.save();
+    const post = await newPost.save();
 
-    res.status(200).json(blog);
+    res.status(200).json(post);
   } catch (err) {
     res.status(500).json(err);
     console.log(err);
@@ -22,11 +25,11 @@ router.post("", async (req, res) => {
 });
 
 // GET ALL POST
-router.get("", async (req, res) => {
+router.get("/", verifyToken, async (req, res) => {
   try {
     const query = {};
-    const blogs = await Blog.find(query);
-    res.status(200).json(blogs);
+    const posts = await Post.find(query);
+    res.status(200).json(posts);
   } catch (err) {
     res.status(500).json(err);
     console.log(err);
@@ -37,9 +40,9 @@ router.get("", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    const blog = await Blog.findById(id);
+    const post = await Post.findById(id);
 
-    res.status(200).json(blog);
+    res.status(200).json(post);
   } catch (err) {
     res.status(500).json(err);
     console.log(err);
@@ -50,7 +53,7 @@ router.get("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    await Blog.findByIdAndDelete(id);
+    await Post.findByIdAndDelete(id);
     res.status(200).json("The Post has been deleted!");
   } catch (err) {
     res.status(500).json(err);
@@ -63,17 +66,14 @@ router.put("/:id", async (req, res) => {
   try {
     const id = req.params.id;
 
-    const updateBlog = await Blog.findByIdAndUpdate(
-      id,
-      {
-        $set: req.body,
-      },
-      { rew: true }
-    );
-    res.status(200).json(updateBlog);
+    const updatePost = await Post.findByIdAndUpdate(id, {
+      $set: req.body,
+    });
+    res.status(200).json(updatePost);
   } catch (err) {
     res.status(500).json(err);
     console.log(err);
   }
 });
+
 module.exports = router;

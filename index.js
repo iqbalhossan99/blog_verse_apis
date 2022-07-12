@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const port = process.env.Port || 8000;
 const authRoute = require("./routes/auth");
-const blogRouter = require("./routes/blog");
+const postRouter = require("./routes/post");
 
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
@@ -21,7 +21,7 @@ mongoose
 
 // routes
 app.use("/api/auth", authRoute);
-app.use("/api/blogs", blogRouter);
+app.use("/api/posts", postRouter);
 
 app.get("/", (req, res) => {
   res.send("Backend server connected!");
@@ -30,6 +30,3 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log("Backend is running!");
 });
-
-// blogVerse
-// 6rshq7SQHGlM5stz
