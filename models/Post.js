@@ -7,6 +7,8 @@ const PostSchema = new mongoose.Schema(
     img: { type: String },
     category: { type: String, require: true },
     username: { type: String, require: true },
+    email: { type: String, require: true },
+    userPhoto: { type: String },
     likes: { type: Array, default: [] },
     comments: {
       type: Array,

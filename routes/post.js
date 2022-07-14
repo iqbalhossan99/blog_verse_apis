@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const Post = require("../models/Post");
+const { ObjectId } = require("mongodb");
 
 // CREATE POST
 router.post("", async (req, res) => {
@@ -39,7 +40,9 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    const post = await Post.findById(id);
+    const query = { _id: ObjectId(id) };
+
+    const post = await Post.findById(query);
 
     res.status(200).json(post);
   } catch (err) {
@@ -52,7 +55,9 @@ router.get("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    await Post.findByIdAndDelete(id);
+    const query = { _id: ObjectId(id) };
+
+    await Post.findByIdAndDelete(query);
     res.status(200).json("The Post has been deleted!");
   } catch (err) {
     res.status(500).json(err);
@@ -64,8 +69,9 @@ router.delete("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const id = req.params.id;
+    const query = { _id: ObjectId(id) };
 
-    const updatePost = await Post.findByIdAndUpdate(id, {
+    const updatePost = await Post.findByIdAndUpdate(query, {
       $set: req.body,
     });
     res.status(200).json(updatePost);
@@ -75,14 +81,33 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+//LIKE / DISLIKE A POST
+
+// router.put("/:id/like", async (req, res) => {
+//   try {
+//     const { id } = req.params.id;
+//     const post = await Post.findById(id);
+//     if (!post.likes.includes(req.body.userId)) {
+//       await post.updateOne({ $push: { likes: req.body.userId } });
+//       res.status(200).json("The post has been liked");
+//     } else {
+//       await post.updateOne({ $pull: { likes: req.body.userId } });
+//       res.status(200).json("The post has been disliked");
+//     }
+//   } catch (err) {
+//     res.status(500).json(err);
+//   }
+// });
+
 // UPDATE COMMENT
 router.put("/:id/comment", async (req, res) => {
   try {
     const id = req.params.id;
+    const query = { _id: ObjectId(id) };
     const comment = req.body.comments;
-    console.log(comment);
+
     const postComment = await Post.findByIdAndUpdate(
-      id,
+      query,
       {
         $push: { comments: req.body },
       },
@@ -95,15 +120,14 @@ router.put("/:id/comment", async (req, res) => {
   }
 });
 
-// get one by post id
-router.get("/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
-    const comments = await Post.findById(id);
-    res.status(200).json(comments);
-  } catch (err) {
-    res.status(500).json(err);
-  }
+router.get("/userposts/:email", async (req, res) => {
+  const email = req.params.email;
+  console.log(req.params.email);
+  // const query = { email: email };
+
+  const query = { email: email };
+  const getOrder = await Post.find(query);
+  res.send(getOrder);
 });
 
 module.exports = router;
