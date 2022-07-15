@@ -5,13 +5,6 @@ const { ObjectId } = require("mongodb");
 // CREATE POST
 router.post("", async (req, res) => {
   try {
-    // const title = req.body?.title;
-    // const desc = req.body?.desc;
-    // const img = req.body?.img;
-    // const category = req.body?.category;
-    // const username = req.body?.username;
-    // const query = { title: title, desc: desc, img: img, username: username };
-
     const query = req?.body;
     const newPost = new Post(query);
 
@@ -120,14 +113,16 @@ router.put("/:id/comment", async (req, res) => {
   }
 });
 
+// Get uer posts
 router.get("/userposts/:email", async (req, res) => {
-  const email = req.params.email;
-  console.log(req.params.email);
-  // const query = { email: email };
-
-  const query = { email: email };
-  const getOrder = await Post.find(query);
-  res.send(getOrder);
+  try {
+    const email = req.params.email;
+    const query = { email: email };
+    const userPosts = await Post.find(query);
+    res.status(200).json(userPosts);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 module.exports = router;
