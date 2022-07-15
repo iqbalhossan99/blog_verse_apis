@@ -5,7 +5,7 @@ const { ObjectId } = require("mongodb");
 const verifyToken = require("../middleWare/requireAuth");
 
 // CREATE POST
-router.post("", async (req, res) => {
+router.post("", verifyToken, async (req, res) => {
   try {
     const query = req?.body;
     const newPost = new Post(query);
@@ -32,7 +32,7 @@ router.get("/", async (req, res) => {
 });
 
 // GET SINGLE POST BY ID
-router.get("/:id", verifyToken, async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const query = { _id: ObjectId(id) };
@@ -47,7 +47,7 @@ router.get("/:id", verifyToken, async (req, res) => {
 });
 
 // DELETE POST BY ID
-router.delete("/:id", verifyToken, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const query = { _id: ObjectId(id) };

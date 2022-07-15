@@ -31,24 +31,40 @@ router.post("/register", async (req, res) => {
 // LOGIN
 router.post("/login", async (req, res) => {
   try {
-    const getEmail = req.body?.email;
-    const getPassword = req.body?.password;
+    const getEmail = req?.body?.email;
+    const getPassword = req?.body?.password;
 
     const getUser = await User.findOne({ email: getEmail });
     !getUser && res.status(400).json("Email  address doesn't match!");
 
     const validate = await bcrypt.compare(getPassword, getUser.password);
-    // jwt token
-    const token = jwt.sign({ email: getEmail }, process.env.JWT_SECRET);
     !validate && res.status(400).json("Password doesn't matched!");
 
     const { password, ...others } = getUser._doc;
 
-    res.status(200, { others, token }).json({ others, token });
+    res.status(200).json(others);
   } catch (err) {
     res.status(500).json(err);
     console.log(err);
   }
+});
+
+router.put("/user/:email", async (req, res) => {
+  const email = req.params.email;
+  const user = req.body;
+  console.log(email, user);
+  const filter = { email: email };
+  const options = { upsert: true };
+  const updateDoc = {
+    $set: user,
+  };
+
+  const updateUser = await User.updateOne(filter, updateDoc, options);
+
+  // jwt token
+  const token = jwt.sign({ email: email }, process.env.JWT_SECRET);
+
+  res.send({ updateUser, token });
 });
 
 module.exports = router;
