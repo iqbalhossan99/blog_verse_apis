@@ -2,6 +2,8 @@ const router = require("express").Router();
 const Post = require("../models/Post");
 const { ObjectId } = require("mongodb");
 
+const verifyToken = require("../middleWare/requireAuth");
+
 // CREATE POST
 router.post("", async (req, res) => {
   try {
@@ -30,7 +32,7 @@ router.get("/", async (req, res) => {
 });
 
 // GET SINGLE POST BY ID
-router.get("/:id", async (req, res) => {
+router.get("/:id", verifyToken, async (req, res) => {
   try {
     const id = req.params.id;
     const query = { _id: ObjectId(id) };
@@ -45,7 +47,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // DELETE POST BY ID
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyToken, async (req, res) => {
   try {
     const id = req.params.id;
     const query = { _id: ObjectId(id) };
@@ -59,7 +61,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 // UPDATE THE POST
-router.put("/:id", async (req, res) => {
+router.put("/:id", verifyToken, async (req, res) => {
   try {
     const id = req.params.id;
     const query = { _id: ObjectId(id) };
@@ -93,7 +95,7 @@ router.put("/:id", async (req, res) => {
 // });
 
 // UPDATE COMMENT
-router.put("/:id/comment", async (req, res) => {
+router.put("/:id/comment", verifyToken, async (req, res) => {
   try {
     const id = req.params.id;
     const query = { _id: ObjectId(id) };
@@ -114,7 +116,7 @@ router.put("/:id/comment", async (req, res) => {
 });
 
 // Get uer posts
-router.get("/userposts/:email", async (req, res) => {
+router.get("/userposts/:email", verifyToken, async (req, res) => {
   try {
     const email = req.params.email;
     const query = { email: email };
